@@ -76,4 +76,6 @@
   - The name is more clear and provides better context for what is in the contents of the variable
 
 Discussion:
-- what is the benefit of getters and setters for a variable? 
+- what is the benefit of getters and setters for a variable?
+  - getters and setters for a FIELD promote information hiding
+    - the c# docs here said that a property, in using getters and setters, "helps promote the safety and flexibility of methods" when accessing data. However, I want to affirm the quality of code that is enhanced, not just the benefit given by the construct
