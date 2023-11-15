@@ -71,7 +71,7 @@ public void ProcessOrder(Order order)
 - What is the process of removing the code smell (refactoring)?
     - Extract highly coupled lines within the function into their own functions
 ```
-ublic void ProcessOrder(Order order)
+public void ProcessOrder(Order order)
 {
     // Validate the order
     ValidateOrder(order);
