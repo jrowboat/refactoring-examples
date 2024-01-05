@@ -101,14 +101,14 @@ function pythagoreanTheorem() {
 ```
   // in this example, both the proveTriangleSatisfiesTherom() and getTriangleSides() methods get the triangle, then do something with the sides. We can save lines of code here if we parameterize the proveTriangleSatisfiesTheorem so that it takes a sides object, eliminating the repeated code in the service
 
-  public PythagoreanTheoremControllerHelper() {
+  public class  PythagoreanTheoremControllerHelper() {
     public getTriangleSides() {
       const triangle = PythagoreanTheoremService.getTriangle();
       return triangle.select(x => x.sides);  
     }
   }
 
-  public PythagoreanTheoremController() {
+  public class  PythagoreanTheoremController() {
     public doesTriangleSatisfyTheorem() {
       return PythagoreanTheoremService.proveTriangleSatisfiesTheorem();
     }
@@ -118,7 +118,7 @@ function pythagoreanTheorem() {
     }
   }
 
-  public PythagoreanTheoremService() {
+  public class PythagoreanTheoremService() {
     public getTriangle() {
       return new Triangle {
         sides: {
@@ -143,41 +143,61 @@ function pythagoreanTheorem() {
 ```
   // duplicated code in service eliminated and service method is parameterized
 
-  public PythagoreanTheoremControllerHelper() {
-    public getTriangleSides() {
-      const triangle = PythagoreanTheoremService.getTriangle();
-      return triangle.select(x => x.sides);  
-    }
-  }
+  public class PythagoreanTheoremController() {
 
-  public PythagoreanTheoremController() {
+    private readonly IPythagoreanTheoremService _pythagoreanTheoremService;
+    private readonly ITriangleService _triangleService;
+
+    public PythagoreanTheoremController(IPythagoreanTheoremService pythagoreanTheoremService, ITriangleService triangleService)
+    {
+      _pythagoreanTheoremService = pythagoreanTheoremService;
+      _triangleService = triangleService;
+    }
+
     public doesTriangleSatisfyTheorem() {
-      const sides = PythagoreanTheoremControllerHelper.getTriangleSides();
-      return PythagoreanTheoremService.proveTriangleSatisfiesTheorem(sides);
-    }
-
-    public getTriangleSides() {
-      return PythagoreanTheoremControllerHelper.getTriangleSides();
+      const triangle = _triangleService.getTriangle();
+      return _pythagoreanTheoremService.proveTriangleSatisfiesTheorem(sides);
     }
   }
 
-  public PythagoreanTheoremService() {
-    public getTriangle() {
+  public class ITriangleService {
+    Triangle getTriangle();
+  }
+
+  public class Triangle {
+    int SideA;
+    int SideB;
+    int SideC;
+  }
+
+  public class TriangleService : ITriangleService {
+    public Triangle getTriangle() {
       return new Triangle {
-        sides: new Side[] {
-          {'a': 3},
-          {'b': 4},
-          {'c': 5}
-        }
-        type: 'Scalene'
+        SideA: 3,
+        SideB: 4,
+        SideC: 5
       }
     }
+  }
 
-    public proveTriangleSatisfiesTheorem(Side[] sides) {
-      public squared(side)
-        return side * side;
+  public class IPythagoreanTheoremService {
+    bool proveTriangleSatisfiesTheorem(Triangle triangle);
+  }
 
-      return squared(sides['a']) + squared(sides['b']) = squared(sides['c']);
+  public class PythagoreanTheoremService : IPythagoreanTheoremService {
+    public bool proveTriangleSatisfiesTheorem(Triangle triangle) {
+      return squared(triangle.SideA) + squared(triangle.SideB) = squared(triangle.SideC);
+    }
+
+    private int squared(int side) {
+      return side * side;
     }
   }
 ```
+
+Shared assumptions relating to encapsulation problem:
+- direct exposure of service methods
+- multiple responsibilities within PythagoreanTheoremService
+- Helper class of controller calling service methods rather than performing complicated logic
+  - code smell in my system
+- squaring method is now private
